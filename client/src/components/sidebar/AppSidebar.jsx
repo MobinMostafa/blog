@@ -9,14 +9,19 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubItem,
   } from "@/components/ui/sidebar"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Link } from "react-router-dom"
 import Logo from '@/assets/images/logo.png'
-import { IoHomeOutline } from "react-icons/io5";
+// import { GalleryVerticalEnd } from "lucide-react"
+import { FaHome } from "react-icons/fa";
 import { FaBlog } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { FaComments } from "react-icons/fa";
 import { FaUserSecret } from "react-icons/fa";
+import { ChevronRight } from "lucide-react"
 
 
 // Menu items.
@@ -24,7 +29,7 @@ const items = [
     {
       title: "Home",
       url: "/",
-      icon: <IoHomeOutline />,
+      icon: <FaHome />,
     },
     {
       title: "Blogs",
@@ -35,6 +40,17 @@ const items = [
         title: "Categories",
         url: "/about",
         icon: <MdCategory />,
+        category: true,
+        categoryItems: [
+            {
+                title: "Category 1",
+                url: "/about",
+            },
+            {
+                title: "Category 2",
+                url: "/about",
+            },
+            ],
     },
     {
         title: "Comments",
@@ -48,28 +64,69 @@ const items = [
     }
   ]
 
+
+
 const AppSidebar = () => {
   return (
-    <Sidebar className="bg-white">
+    <Sidebar collapsible="icon">
     <SidebarHeader>
-        <img src={Logo} alt="logo" />
+       <Link to="/">
+        <img src={Logo} alt="logo" className="w-[170px]" />
+       </Link>
     </SidebarHeader>
-    <SidebarContent >
+    <SidebarContent>
         <SidebarGroup>
          <SidebarGroupLabel>Application</SidebarGroupLabel>
          <SidebarGroupContent>
             <SidebarMenu>
+
               {
+              
                 items.map((item,index) => (
-                  <SidebarMenuItem key={index}>
-                    <SidebarMenuButton>
-                         {item.icon}
+                  <div key={index}>
+                  {item.category ? (
+               
+                    <Collapsible defaultOpen className="group/collapsible">
+                    <SidebarMenuItem> 
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton>
+                      {item.icon}
                         <Link to={item.url}>
-                            {item.title}
+                          {item.title}
                         </Link>
-                
+                        <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+
+                    <CollapsibleContent>
+                      
+                       
+                            {item.categoryItems.map((categoryItem, index) => (
+                            <SidebarMenuSub key={index}>
+                            <SidebarMenuSubItem >
+                                <Link to={categoryItem.url}>
+                                {categoryItem.title}
+                                </Link>
+                            </SidebarMenuSubItem>
+                            </SidebarMenuSub>
+                            ))}
+                       
+
+                    </CollapsibleContent>
+                    </SidebarMenuItem>
+                   </Collapsible>
+                 
+                  ) : (
+                    <SidebarMenuItem>
+                    <SidebarMenuButton>
+                      {item.icon}
+                      <Link to={item.url}>
+                        {item.title}
+                      </Link>
                     </SidebarMenuButton>
-                  </SidebarMenuItem>
+                    </SidebarMenuItem>
+                  )}
+                  </div>
                 ))
             }
             </SidebarMenu>
@@ -83,3 +140,28 @@ const AppSidebar = () => {
 }
 
 export default AppSidebar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
