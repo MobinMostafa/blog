@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -20,6 +20,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { IoArrowBack } from "react-icons/io5";
+import { getEnv } from "@/helpers/getEnv"
+import { signIn } from "@/helpers/routeName"
+import { showToast } from "@/helpers/showToast"
 
 
 
@@ -29,6 +32,9 @@ export function SignupForm({
   ...props
 }){
   
+const navigate = useNavigate()
+
+
 const formSchema = z.object({ 
     name: z .string() 
     .min(3, { message: "Name must be at least 3 characters long" }) 
@@ -52,11 +58,29 @@ const formSchema = z.object({
     },
   })
 
+
   // 2. Define a submit handler.
-  function onSubmit(values) {
+  async function onSubmit(values) {
     // Do something with the form values.
- 
-    console.log(values)
+    try {
+      const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/auth/register`,{
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(values)
+        }
+      )
+     
+     const data = await response.json() 
+      if(!response.ok){
+        showToast('error', data.message)
+      }
+      
+      navigate(signIn)
+      showToast('success', data.message)
+      // console.log(values)
+    } catch (error) {
+      showToast('error', error.message)
+    }
   }
 
   return (
