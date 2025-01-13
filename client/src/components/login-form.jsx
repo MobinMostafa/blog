@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -20,6 +20,9 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { IoArrowBack } from "react-icons/io5";
+import { routeIndex } from "@/helpers/routeName"
+import { getEnv } from "@/helpers/getEnv"
+import { showToast } from "@/helpers/showToast"
 
 
 
@@ -29,9 +32,11 @@ export function LoginForm({
   ...props
 }){
   
+ const navigate = useNavigate()
+
   const formSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(8, {message: "Password must be at least 8 characters long"}),
+    password: z.string().min(3, {message: "Password is required"}),
   })
   
 
@@ -45,11 +50,30 @@ export function LoginForm({
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values) {
-    // Do something with the form values.
- 
-    console.log(values)
-  }
+   async function onSubmit(values) {
+     // Do something with the form values.
+     try {
+       const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/auth/login`,{
+           method: 'POST',
+           headers: {'Content-Type': 'application/json'},
+           credentials: 'include',
+           body: JSON.stringify(values)
+         }
+       )
+      
+      const data = await response.json() 
+       if(!response.ok){
+         showToast('error', data.message)
+         return
+       }
+       
+       showToast('success', data.message)
+       navigate(routeIndex)
+       // console.log(values)
+     } catch (error) {
+       showToast('error', error.message)
+     }
+   }
 
   return (
     (<div className={cn("flex flex-col gap-6", className)} {...props}>
