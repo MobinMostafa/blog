@@ -25,7 +25,7 @@ import { RiLogoutCircleRLine } from "react-icons/ri";
 import { removeUser } from '@/redux/user/user.slice'
 import { showToast } from "@/helpers/showToast"
 import { getEnv } from "@/helpers/getEnv"
-import { routeIndex } from "@/helpers/routeName"
+import { routeIndex, routeProfile } from "@/helpers/routeName"
 
 
 
@@ -106,7 +106,7 @@ const Header = () => {
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild className="cursor-pointer">
-                        <Link to="">
+                        <Link to={routeProfile} >
                         <FaRegUser />
                         Profile
                         </Link>
