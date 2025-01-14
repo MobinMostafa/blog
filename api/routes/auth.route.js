@@ -1,11 +1,12 @@
 import express from "express"
-import { GoogleLogin, login, register } from "../controllers/auth.controller.js"
+import { GoogleLogin, login, Logout, register } from "../controllers/auth.controller.js"
 
 const AuthRoute = express.Router()
 
 AuthRoute.post('/register', register)
 AuthRoute.post('/login', login)
 AuthRoute.post('/google-login', GoogleLogin) 
+AuthRoute.get('/logout', Logout)
 
 
 export default AuthRoute
