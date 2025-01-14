@@ -2,12 +2,46 @@
 import { signInWithPopup } from 'firebase/auth'
 import { Button } from './ui/button'
 import { auth, provider } from '@/helpers/firebase'
+import { routeIndex } from "@/helpers/routeName"
+import { getEnv } from "@/helpers/getEnv"
+import { showToast } from "@/helpers/showToast"
+import { useNavigate } from 'react-router-dom'
+
 
 const GoogleLogin = () => {
+  const navigate = useNavigate()
 
   const handleLogin = async () => {
-        const googleResponse = await signInWithPopup(auth,provider)
-        console.log(googleResponse)
+    
+           try {
+            const googleResponse = await signInWithPopup(auth,provider)
+            // console.log(googleResponse)
+            const user = googleResponse.user
+            const bodyData = {
+              name: user.displayName,
+              email: user.email,
+              avatar: user.photoURL
+            }
+               const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/auth/google-login`,{
+                   method: 'POST',
+                   headers: {'Content-Type': 'application/json'},
+                   credentials: 'include',
+                   body: JSON.stringify(bodyData)
+                 }
+               )
+              
+              const data = await response.json() 
+               if(!response.ok){
+                 showToast('error', data.message)
+                 return
+               }
+               
+               showToast('success', data.message)
+               navigate(routeIndex)
+               // console.log(values)
+             } catch (error) {
+               showToast('error', error.message)
+             }
       
   }
   return (
