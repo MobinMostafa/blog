@@ -73,14 +73,14 @@ const formSchema = z.object({
      
      const data = await response.json() 
       if(!response.ok){
-        showToast('error', data.message)
+       return showToast('error', data.message)
       }
       
       navigate(signIn)
       showToast('success', data.message)
       // console.log(values)
     } catch (error) {
-      showToast('error', error.message)
+     return showToast('error', error.message)
     }
   }
 
