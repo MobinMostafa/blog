@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 import mongoose from "mongoose"
 import AuthRoute from "./routes/auth.route.js"
+import userRoute from "./routes/user.route.js"
 
 
 dotenv.config()
@@ -21,6 +22,7 @@ app.use(cors({
 // route 
 
 app.use('/api/auth', AuthRoute)
+app.use('/api/user', userRoute)
 
 
 

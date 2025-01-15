@@ -16,11 +16,15 @@ const Layout = () => {
        
        <SidebarInset>
         <Header />
-        <main className='w-full mt-1'>
-          
+        <main>
+            <div className='w-full min-h-[calc(100vh-40px)] flex items-center justify-center py-5'>
             <Outlet />
-            <Footer />
+            </div>
+          
         </main>
+     
+           <Footer />
+  
         </SidebarInset>
      </SidebarProvider>
   )
