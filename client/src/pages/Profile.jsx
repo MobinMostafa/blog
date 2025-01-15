@@ -23,21 +23,25 @@ import {
 import { routeIndex } from "@/helpers/routeName"
 import { getEnv } from "@/helpers/getEnv"
 import { showToast } from "@/helpers/showToast"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { setUser } from "@/redux/user/user.slice"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Textarea } from "@/components/ui/textarea"
+import { useFetch } from "@/hooks/useFetch"
+import { useEffect } from "react"
 
 
 
 
 
 
-function Profile({
-  className,
-  ...props
-}){
+function Profile(){
 
+ const user = useSelector((state) => state.user )
+ const {data:userData, loading, error } = useFetch(`${getEnv('VITE_API_BASE_URL')}/user/get-user/${user.user._id}`, 
+  { method: 'GET', credentials: 'include' }  
+)
+//  console.log(userData)
  const dispatch = useDispatch()
 
  const navigate = useNavigate()
@@ -60,6 +64,16 @@ function Profile({
       password: "",
     },
   })
+
+   useEffect(() => {
+      if(userData && userData.success){
+          form.reset({
+           name: userData.user.name,
+           email: userData.user.email,
+           bio: userData.user.bio  
+          })
+      }
+   }, [userData])
 
   // 2. Define a submit handler.
    async function onSubmit(values) {
@@ -88,7 +102,7 @@ function Profile({
       return  showToast('error', error.message)
      }
    }
-
+  if(loading) return <div>Loading...</div>
   return (
   <div className="flex flex-col gap-6 justify-center items-center">
       <Card className="md:w-[30rem] w-full">
@@ -98,7 +112,7 @@ function Profile({
         <CardContent>
         <div className="flex flex-col mb-5 justify-center items-center">
             <Avatar className='w-28 h-28'>
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src={user?.user?.avatar} />
             </Avatar>
       
         </div>
@@ -114,7 +128,7 @@ function Profile({
                   <FormItem> 
 
                    <Label htmlFor="name">Name</Label>
-                   <Input id="name" type="text" placeholder="Enter your name" required {...field} />
+                   <Input id="name" type="text" placeholder="Enter your name" required {...field} value={user.user.name} />
 
                    <FormMessage />
                    </FormItem>
@@ -127,7 +141,7 @@ function Profile({
                   <FormItem> 
 
                    <Label htmlFor="email">Email</Label>
-                   <Input id="email" type="email" placeholder="Enter your email" required {...field} />
+                   <Input id="email" type="email" placeholder="Enter your email" required {...field} value={user.user.email} />
 
                    <FormMessage />
                    </FormItem>
@@ -140,7 +154,7 @@ function Profile({
                   <FormItem> 
 
                    <Label htmlFor="bio">Bio</Label>
-                   <Textarea id="bio" type="text" placeholder="Enter your bio" required {...field} />
+                   <Textarea id="bio" type="text" placeholder="Enter your bio" required {...field} value={user.user.bio} />
 
                    <FormMessage />
                    </FormItem>
